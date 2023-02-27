@@ -10,6 +10,8 @@ class PetsProvider extends ChangeNotifier {
   bool isLoading = true;
   String error = '';
   Pets pets = Pets(data: []);
+  Pets serachedPets = Pets(data: []);
+  String searchText = '';
 
   //
   getDataFromAPI() async {
@@ -24,7 +26,25 @@ class PetsProvider extends ChangeNotifier {
       error = e.toString();
     }
     isLoading = false;
+    updateData();
+  }
+
+  updateData() {
+    serachedPets.data.clear();
+    if (searchText.isEmpty) {
+      serachedPets.data.addAll(pets.data);
+    } else {
+      serachedPets.data.addAll(pets.data
+          .where((element) =>
+              element.userName.toLowerCase().startsWith(searchText))
+          .toList());
+    }
     notifyListeners();
+  }
+
+  search(String username) {
+    searchText = username;
+    updateData();
   }
   //
 }
